@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>복영기와 팔뚝 - 팔복동 이야기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 폰트 변경: 감자꽃(제목) & 고운돋움(본문) -->
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* 폰트 설정: 제목은 손글씨 느낌의 'Gamja Flower', 본문은 부드러운 'Gowun Dodum' */
+        h1, h2, h3, h4, .font-cute { font-family: 'Gamja Flower', cursive; }
+        body { font-family: 'Gowun Dodum', sans-serif; background-color: #FFFDF7; color: #4A4A4A; }
+
+        /* 펠트/종이 질감 효과 오버레이 */
+        .texture-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* 둥글둥글한 카드 스타일 */
+        .felt-card {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.05); /* 부드러운 그림자 */
+            border: 2px solid #F0F0F0;
+            transition: transform 0.3s ease;
+        }
+        .felt-card:hover { transform: translateY(-5px); }
+
+        /* 이미지 프레임 스타일 */
+        .photo-frame {
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+        }
+        .photo-frame:nth-child(even) { transform: rotate(2deg); }
+
+        /* 색상 팔레트 */
+        .bg-mint { background-color: #E0F2F1; }
+        .text-mint { color: #4DB6AC; }
+        .bg-orange { background-color: #FFF3E0; }
+        .text-orange { color: #FF9800; }
+        .bg-sky { background-color: #E3F2FD; }
+
+        /* 애니메이션 */
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 채팅 UI 스타일 */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+        }
+        .chat-button {
+            width: 70px;
+            height: 70px;
+            background-color: #4DB6AC;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            transition: all 0.3s ease;
+            border: 4px solid white;
+        }
+        .chat-button:hover { transform: scale(1.1); }
+        .chat-window {
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 4px solid #E0F2F1;
+        }
+        .chat-window.open { display: flex; animation: slideInUp 0.3s ease; }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-header { background-color: #E0F2F1; padding: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f0f0f0; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background-color: #FAFAFA; font-size: 14px; }
+        .chat-input-area { padding: 10px; border-top: 2px solid #f0f0f0; display: flex; gap: 8px; }
+        .chat-bubble { padding: 10px 14px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; line-height: 1.4; }
+        .chat-bubble.bot { background-color: #E0F2F1; color: #00695C; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-bubble.user { background-color: #FFF3E0; color: #E65100; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 4px; }
+        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite;}
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 40% { color: #333; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 60% { text-shadow: .25em 0 0 #333, .5em 0 0 rgba(0,0,0,0);} 80%, 100% { text-shadow: .25em 0 0 #333, .5em 0 0 #333;}}
+
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- 텍스처 효과 -->
+    <div class="texture-overlay"></div>
+
+    <!-- 네비게이션 -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 py-3">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+            <div class="text-2xl text-mint flex items-center gap-2">
+                ☁️ <span class="font-cute text-gray-700">복영기와 팔뚝</span>
+            </div>
+            <div class="hidden md:flex gap-6 font-cute text-lg text-gray-500">
+                <a href="#story" class="hover:text-mint transition">이야기</a>
+                <a href="#profile" class="hover:text-mint transition">친구들 소개</a>
+                <a href="#episode" class="hover:text-mint transition">에피소드</a>
+                <a href="#wish-tree" class="hover:text-mint transition">소원 나무</a>
+                <a href="#future" class="hover:text-mint transition">미래문화도시</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 히어로 섹션 -->
+    <header class="pt-32 pb-20 px-6 text-center bg-gradient-to-b from-blue-50 to-[#FFFDF7]">
+        <div class="max-w-4xl mx-auto">
+            <span class="inline-block bg-white px-4 py-2 rounded-full shadow-sm text-orange font-bold mb-4 animate__animated animate__bounceIn">
+                ✨ 팔복예술공장의 귀여운 요정들
+            </span>
+            <h1 class="text-5xl md:text-6xl text-gray-800 mb-6 leading-tight animate__animated animate__fadeInUp">
+                안녕? 우린 <span class="text-mint">복영기</span>와<br>
+                <span class="text-orange">팔뚝</span>이라고 해!
+            </h1>
+            <p class="text-xl text-gray-500 mb-12 font-cute animate__animated animate__fadeInUp animate__delay-1s">
+                오래된 굴뚝 연기에서 피어난 우리의 이야기를 들어볼래?
+            </p>
+            
+            <!-- 메인 캐릭터 이미지 (사용자 업로드 파일) -->
+            <div class="relative max-w-2xl mx-auto">
+                <div class="absolute inset-0 bg-mint/20 rounded-full blur-3xl transform scale-90"></div>
+                <img src="image_10da20.jpg" alt="복영기와 팔뚝 캐릭터" class="relative z-10 w-full rounded-3xl shadow-lg float-animation mx-auto border-4 border-white">
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. 탄생 배경 (스토리북 스타일) -->
+    <section id="story" class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl text-center text-gray-800 mb-16 font-cute">📖 옛날 옛적, 팔복동 굴뚝에는...</h2>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- 굴뚝 이미지 (사용자 업로드 파일) -->
+                <div class="photo-frame rotate-[-3deg]">
+                    <img src="image_10d9e0.jpg" alt="팔복예술공장 굴뚝" class="w-full h-80 object-cover rounded-xl">
+                    <p class="text-center font-cute text-gray-400 mt-2">우리가 태어난 굴뚝집이야!</p>
+                </div>
+                
+                <div class="space-y-8">
+                    <div class="felt-card p-6 bg-white relative">
+                        <span class="absolute -top-3 -left-3 text-4xl">🏭</span>
+                        <p class="text-lg leading-relaxed">
+                            아주 오랜 옛날, 팔복동 공장 굴뚝 안에는 
+                            열심히 일했던 사람들의 <b>따뜻한 숨결</b>과 
+                            기계들의 <b>뜨거운 열기</b>가 잠들어 있었어.
+                        </p>
+                    </div>
+                    <div class="felt-card p-6 bg-white relative translate-x-4">
+                        <span class="absolute -top-3 -right-3 text-4xl">🎨</span>
+                        <p class="text-lg leading-relaxed">
+                            어느 날, 텅 빈 공장에 <b>예술가</b>들이 찾아오고 
+                            아이들의 웃음소리가 들리자, 
+                            잠자던 연기가 <b>"하암~"</b> 하고 기지개를 켰지!
+                        </p>
+                    </div>
+                    <div class="felt-card p-6 bg-white relative">
+                        <span class="absolute -top-3 -left-3 text-4xl">💨</span>
+                        <p class="text-lg leading-relaxed">
+                            <b>"퐁!"</b> 하고 튀어나온 게 바로 나, <b>복영기!</b><br>
+                            그리고 내가 너무 신나서 <b>"에취!"</b> 하고 재채기를 했더니<br>
+                            내 친구 <b>팔뚝</b>이가 뿅! 하고 나타났단다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. 캐릭터 소개 (표 형식) -->
+    <section id="profile" class="py-20 px-6 bg-sky/20">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl text-center text-gray-800 mb-4 font-cute">☁️ 우린 이렇게 달라요!</h2>
+            <p class="text-center text-gray-500 mb-12">성격은 다르지만 세상에서 제일 친한 단짝 친구!</p>
+
+            <div class="bg-white rounded-3xl p-2 md:p-8 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 font-cute text-lg border-b-2 border-gray-100">
+                                <th class="p-4 text-center w-1/3">구분</th>
+                                <th class="p-4 text-center w-1/3 text-mint">복영기 (Bok-Yeong-Gi)</th>
+                                <th class="p-4 text-center w-1/3 text-orange">팔뚝 (Pal-Ttuk)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">누구인가요?</td>
+                                <td class="p-4 bg-mint/5">
+                                    <span class="font-bold">문화의 연기</span><br>
+                                    사람들에게 행복을 주는 몽글몽글한 존재
+                                </td>
+                                <td class="p-4 bg-orange/5">
+                                    <span class="font-bold">작은 연기 조각</span><br>
+                                    복영기의 재채기로 태어난 든든한 단짝
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">MBTI 성격</td>
+                                <td class="p-4 bg-mint/5">
+                                    <span class="inline-block bg-mint text-white px-2 py-1 rounded text-xs mb-1">ENFP</span><br>
+                                    사람을 엄청 좋아하고<br>호기심 대장이야!
+                                </td>
+                                <td class="p-4 bg-orange/5">
+                                    <span class="inline-block bg-orange text-white px-2 py-1 rounded text-xs mb-1">ISFP</span><br>
+                                    조용하지만 눈치가 빠르고<br>감각이 뛰어나!
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">특징 & 능력</td>
+                                <td class="p-4 bg-mint/5">
+                                    🍀 <b>행운 선물하기</b><br>
+                                    오래된 물건의 기억 읽기<br>
+                                    기분 좋으면 몸이 커짐
+                                </td>
+                                <td class="p-4 bg-orange/5">
+                                    💡 <b>길 안내하기</b><br>
+                                    좁은 틈새 탐험하기<br>
+                                    몸짓으로 대화함
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">말버릇</td>
+                                <td class="p-4 bg-mint/5 text-mint font-cute text-lg">
+                                    "안녕하세욥?"<br>"재밌지 않아욥?"
+                                </td>
+                                <td class="p-4 bg-orange/5 text-orange font-cute text-lg">
+                                    (말없이 반짝반짝 빛남)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 에피소드 (사진관 컨셉) -->
+    <section id="episode" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl text-center text-gray-800 mb-16 font-cute">📸 팔복동에서의 추억들</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Ep 1 -->
+                <div class="felt-card p-4">
+                    <div class="bg-gray-200 h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                        <span class="text-4xl">🍭</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ep.1 솜사탕 대작전</h3>
+                    <p class="text-gray-600 text-sm">
+                        전시장에서 우는 아이를 발견한 복영기!<br>
+                        몸을 부풀려 솜사탕처럼 변신해서<br>
+                        아이를 웃게 만들었어욥.
+                    </p>
+                </div>
+                
+                <!-- Ep 2 -->
+                <div class="felt-card p-4 translate-y-4"> <!-- 가운데 카드 약간 아래로 -->
+                    <div class="bg-gray-200 h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                        <span class="text-4xl">⚙️</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ep.2 춤추는 톱니바퀴</h3>
+                    <p class="text-gray-600 text-sm">
+                        녹슨 기계를 보고 팔뚝이가 쏙 들어갔어.<br>
+                        '탁탁' 리듬을 타자 옛날 공장의<br>
+                        기억이 홀로그램처럼 피어올랐지!
+                    </p>
+                </div>
+
+                <!-- Ep 3 -->
+                <div class="felt-card p-4">
+                    <div class="bg-gray-200 h-48 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                        <span class="text-4xl">🌸</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ep.3 이팝나무 소동</h3>
+                    <p class="text-gray-600 text-sm">
+                        5월의 새벽, 신나서 씨앗을 흘린 복영기.<br>
+                        팔뚝이가 뒤따라가며 예쁜 꽃길로<br>
+                        만들어주었답니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ✨ NEW: AI 소원 나무 -->
+    <section id="wish-tree" class="py-20 px-6 bg-gradient-to-r from-green-50 to-emerald-50 relative overflow-hidden">
+        <div class="absolute top-0 right-0 opacity-10 text-9xl">🌳</div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <span class="inline-block bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold mb-4">Gemini AI ✨ Powered</span>
+            <h2 class="text-4xl text-gray-800 mb-6 font-cute">🌳 팔복동 소원 나무</h2>
+            <p class="text-gray-500 mb-8">
+                이곳에 소원을 적으면 <span class="text-mint font-bold">복영기</span>가 응원을 해주고,<br>
+                <span class="text-orange font-bold">팔뚝</span>이가 빛으로 반응해 줄 거예요!
+            </p>
+
+            <div class="bg-white rounded-3xl p-8 shadow-lg max-w-2xl mx-auto border-4 border-emerald-100">
+                <div class="flex flex-col gap-4">
+                    <textarea id="wishInput" class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-mint resize-none font-cute text-lg" rows="3" placeholder="예: 올해는 꼭 가족들과 여행을 가고 싶어!"></textarea>
+                    <button onclick="makeAWish()" class="bg-mint text-white font-bold py-3 px-6 rounded-xl hover:bg-emerald-400 transition transform hover:scale-105 shadow-md flex justify-center items-center gap-2">
+                        <span>소원 빌기 ✨</span>
+                    </button>
+                </div>
+                
+                <!-- 결과 표시 영역 -->
+                <div id="wishResult" class="hidden mt-8 text-left bg-gray-50 p-6 rounded-xl border border-gray-100">
+                    <div class="flex gap-4 mb-4">
+                        <div class="w-12 h-12 bg-mint rounded-full flex items-center justify-center text-xl shrink-0">☁️</div>
+                        <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 w-full">
+                            <p class="text-xs text-gray-400 mb-1 font-bold">복영기</p>
+                            <p id="wishResponseText" class="text-gray-700 leading-relaxed"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 flex-row-reverse">
+                        <div class="w-12 h-12 bg-orange rounded-full flex items-center justify-center text-xl shrink-0">🔥</div>
+                        <div class="bg-white p-4 rounded-2xl rounded-tr-none shadow-sm border border-gray-100 w-full text-right">
+                            <p class="text-xs text-gray-400 mb-1 font-bold">팔뚝</p>
+                            <p id="wishActionText" class="text-orange font-bold"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 문화도시 비전 (일러스트 카드) -->
+    <section id="future" class="py-20 px-6 bg-gradient-to-t from-gray-50 to-white">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-4xl text-gray-800 mb-6 font-cute">🚀 앞으로 우리는 어디서 만날까?</h2>
+            <p class="text-gray-500 mb-16">전주 문화도시의 곳곳에서 복영기와 팔뚝을 찾아보세욥!</p>
+
+            <div class="grid md:grid-cols-4 gap-6">
+                <!-- Vision 1 -->
+                <div class="felt-card p-6 flex flex-col items-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl mb-4">📱</div>
+                    <h4 class="text-lg font-bold mb-2">AR 도슨트</h4>
+                    <p class="text-xs text-gray-500">
+                        스마트폰으로 비추면<br>
+                        복영기가 나와서<br>
+                        옛날 이야기를 들려줘요.
+                    </p>
+                </div>
+                <!-- Vision 2 -->
+                <div class="felt-card p-6 flex flex-col items-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-3xl mb-4">🧸</div>
+                    <h4 class="text-lg font-bold mb-2">귀여운 굿즈</h4>
+                    <p class="text-xs text-gray-500">
+                        말랑말랑 무드등,<br>
+                        안전 반짝이 라이트 등<br>
+                        다양한 상품으로 만나요.
+                    </p>
+                </div>
+                <!-- Vision 3 -->
+                <div class="felt-card p-6 flex flex-col items-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-3xl mb-4">📸</div>
+                    <h4 class="text-lg font-bold mb-2">굴뚝 포토존</h4>
+                    <p class="text-xs text-gray-500">
+                        팔복예술공장 굴뚝 아래,<br>
+                        복영기가 태어난 곳에서<br>
+                        인생샷을 남겨보세요!
+                    </p>
+                </div>
+                <!-- Vision 4 -->
+                <div class="felt-card p-6 flex flex-col items-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl mb-4">🏘️</div>
+                    <h4 class="text-lg font-bold mb-2">아름다운 거리</h4>
+                    <p class="text-xs text-gray-500">
+                        어두운 골목길을<br>
+                        팔뚝이의 따뜻한 빛으로<br>
+                        안전하게 밝혀줍니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="py-10 bg-gray-800 text-gray-400 text-center text-sm">
+        <div class="max-w-4xl mx-auto px-6">
+            <p class="mb-2 font-bold text-white text-lg">전주문화재단 미래문화기획팀</p>
+            <p class="mb-4">대한민국 문화도시 전주, 가장 한국적인 미래문화를 만들어갑니다.</p>
+            <p class="opacity-50">Copyright © 2026 JEONJU CULTURAL FOUNDATION. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ✨ Chat Widget -->
+    <div class="chat-widget">
+        <!-- Chat Window -->
+        <div id="chatWindow" class="chat-window">
+            <div class="chat-header">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-lg">☁️</div>
+                <div>
+                    <p class="font-bold text-gray-800 text-sm">복영기 (AI)</p>
+                    <p class="text-xs text-gray-500">무엇이든 물어보세욥!</p>
+                </div>
+                <button onclick="toggleChat()" class="ml-auto text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="chat-bubble bot">
+                    안녕하세욥! 저는 팔복동 굴뚝에서 태어난 복영기에욥! ☁️<br>
+                    궁금한 게 있거나 심심하면 저랑 이야기해욥!
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." 
+                       class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-mint"
+                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-mint text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-emerald-500 transition">➤</button>
+            </div>
+        </div>
+        <!-- Floating Button -->
+        <button onclick="toggleChat()" class="chat-button animate__animated animate__pulse animate__infinite">
+            <span class="text-2xl">💬</span>
+        </button>
+    </div>
+
+    <script>
+        // API Key Configuration
+        const apiKey = ""; // Runtime environment will provide the key
+
+        // --- Chat Widget Logic ---
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow.style.display === 'flex') {
+                chatWindow.style.display = 'none';
+            } else {
+                chatWindow.style.display = 'flex';
+                chatWindow.classList.add('open');
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const messagesContainer = document.getElementById('chatMessages');
+
+            if (!message) return;
+
+            // Add User Message
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user';
+            userBubble.innerText = message;
+            messagesContainer.appendChild(userBubble);
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Add Loading Indicator
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble bot loading-dots';
+            loadingBubble.innerText = '생각하는 중이에욥';
+            messagesContainer.appendChild(loadingBubble);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                // Call Gemini API
+                const response = await callGeminiAPI(message, 
+                    "당신은 전주 팔복예술공장의 굴뚝에서 태어난 연기 요정 '복영기'입니다. " +
+                    "성격은 MBTI ENFP로 매우 활기차고 다정하며, 사람을 좋아합니다. " +
+                    "말끝마다 '~욥'을 붙이는 것이 특징입니다. (예: 안녕하세욥? 정말이에욥?) " +
+                    "과거 산업단지의 기억과 현재 예술공장의 이야기를 잘 알고 있습니다. " +
+                    "옆에는 말없는 친구 '팔뚝'이 항상 함께 있습니다. " +
+                    "사용자의 질문에 친절하고 재치 있게, 그리고 짧게(3문장 이내) 답변해 주세요."
+                );
+
+                // Remove loading and add Bot Message
+                messagesContainer.removeChild(loadingBubble);
+                const botBubble = document.createElement('div');
+                botBubble.className = 'chat-bubble bot';
+                botBubble.innerHTML = response.replace(/\n/g, '<br>');
+                messagesContainer.appendChild(botBubble);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            } catch (error) {
+                messagesContainer.removeChild(loadingBubble);
+                const errorBubble = document.createElement('div');
+                errorBubble.className = 'chat-bubble bot';
+                errorBubble.innerText = "앗, 연기가 꼬였나 봐요. 잠시 후 다시 말해줄래욥?";
+                messagesContainer.appendChild(errorBubble);
+                console.error(error);
+            }
+        }
+
+        // --- Wish Tree Logic ---
+        async function makeAWish() {
+            const wishInput = document.getElementById('wishInput');
+            const wish = wishInput.value.trim();
+            const resultDiv = document.getElementById('wishResult');
+            const responseText = document.getElementById('wishResponseText');
+            const actionText = document.getElementById('wishActionText');
+
+            if (!wish) {
+                alert("소원을 적어주세욥!");
+                return;
+            }
+
+            // Show loading state
+            resultDiv.classList.remove('hidden');
+            responseText.innerText = "복영기가 소원을 읽고 있어욥...";
+            actionText.innerText = "(반짝반짝)";
+
+            try {
+                // Call Gemini API for Wish
+                const prompt = `사용자가 다음과 같은 소원을 빌었습니다: "${wish}". 
+                                이 소원에 대해 복영기가 되어 짧고 따뜻한 응원의 메시지를 작성해 주세요. 
+                                말투는 '~욥'체를 사용하세요. 
+                                그리고 마지막 줄에 별도의 줄로 구분하여 'ACTION: [팔뚝의 반응]' 형식을 추가하세요. 
+                                팔뚝의 반응은 색깔 변화나 춤 등으로 묘사하세요. (예: ACTION: 팔뚝이가 밝은 주황색으로 빛나며 춤을 춥니다)`;
+                
+                const rawResponse = await callGeminiAPI(prompt, "당신은 소원을 들어주는 요정 복영기입니다. 팔뚝이와 함께 사용자에게 힘을 주세요.");
+                
+                // Parse Response
+                const parts = rawResponse.split('ACTION:');
+                const bokyeonggiMsg = parts[0].trim();
+                const palttukMsg = parts[1] ? parts[1].trim() : "팔뚝이가 환하게 웃고 있어요!";
+
+                responseText.innerHTML = bokyeonggiMsg.replace(/\n/g, '<br>');
+                actionText.innerText = palttukMsg;
+
+            } catch (error) {
+                responseText.innerText = "소원을 배달하는 중에 바람이 너무 많이 불었어욥... 다시 시도해 주세요.";
+                console.error(error);
+            }
+        }
+
+        // --- Common Gemini API Call Function ---
+        async function callGeminiAPI(userText, systemInstructionText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userText }] }],
+                systemInstruction: { parts: [{ text: systemInstructionText }] }
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+    </script>
+</body>
+</html>
