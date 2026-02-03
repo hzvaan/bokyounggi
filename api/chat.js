@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     
     // 모델 설정
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash-latest",
+      model: "models/gemini-1.5-flash", // ✅ 앞에 'models/'를 직접 붙여줍니다.
       systemInstruction: systemInstruction 
     });
 
