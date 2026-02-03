@@ -140,7 +140,7 @@
                 <div class="absolute inset-0 bg-mint/20 rounded-full blur-3xl transform scale-90"></div>
                 <img src="https://raw.githubusercontent.com/hzvaan/bokyounggi/9728d78d074138e82528d04465f35ab97d89be53/bokyounggi.jpg" 
                      alt="복영기와 팔뚝 캐릭터" 
-                     onerror="this.src='https://via.placeholder.com/600x400?text=이미지를+불러올+수+없어욥'"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=이미지를+불러올+수+없어영'"
                      class="relative z-10 w-full rounded-3xl shadow-2xl float-animation mx-auto border-8 border-white">
             </div>
         </div>
@@ -245,7 +245,7 @@
                             <tr>
                                 <td class="p-6 text-center font-bold text-gray-600 bg-gray-50/50">말버릇</td>
                                 <td class="p-6 bg-mint/5 text-mint">
-                                    <b>"안녕하세욥?"</b><br><b>"재밌지 않아욥?"</b>
+                                    <b>"안녕하세영?"</b><br><b>"재밌지 않아영?"</b>
                                 </td>
                                 <td class="p-6 bg-orange/5 text-orange">
                                     <b>(반짝반짝 빛나며 미소)</b>
@@ -276,7 +276,7 @@
                     <h3 class="text-xl font-bold mb-2">Ep.1 솜사탕 대작전</h3>
                     <p class="text-gray-600 text-sm">전시장에서 우는 아이를 발견한 복영기!<br>
                      몸을 부풀려 솜사탕처럼 변신해서<br>
-                     아이를 웃게 만들었어욥.</p>
+                     아이를 웃게 만들었어영.</p>
                 </div>
             
                 <!-- Ep 2 -->
@@ -336,18 +336,18 @@
                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-inner">☁️</div>
                 <div>
                     <p class="font-bold text-gray-800 text-base">복영기 (AI)</p>
-                    <p class="text-xs text-teal-600 font-bold">온라인 • 무엇이든 물어보세욥!</p>
+                    <p class="text-xs text-teal-600 font-bold">온라인 • 무엇이든 물어보세영!</p>
                 </div>
                 <button onclick="toggleChat()" class="ml-auto text-gray-400 hover:text-gray-600 text-2xl">✕</button>
             </div>
             <div id="chatMessages" class="chat-messages">
                 <div class="chat-bubble bot">
-                    안녕하세욥! 저는 팔복동 굴뚝에서 태어난 연기 요정 복영기에욥! ☁️<br><br>
-                    팔복동이나 예술공장에 대해 궁금한 게 있나욥? 아니면 그냥 수다 떨고 싶으신가욥?
+                    안녕하세영! 저는 팔복동 굴뚝에서 태어난 연기 요정 복영기에영! ☁️<br><br>
+                    팔복동이나 예술공장에 대해 궁금한 게 있나영? 아니면 그냥 수다 떨고 싶으신가영?
                 </div>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="복영기에게 말을 걸어보세욥..." 
+                <input type="text" id="chatInput" placeholder="복영기에게 말을 걸어보세영..." 
                        class="flex-1 border-2 border-gray-100 rounded-full px-6 py-3 text-base focus:outline-none focus:border-mint transition-colors"
                        onkeypress="if(event.key === 'Enter') sendMessage()">
                 <button onclick="sendMessage()" class="bg-teal-600 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-teal-700 transition-transform active:scale-90 shadow-md">➤</button>
@@ -358,117 +358,113 @@
         </button>
     </div>
 
-    <script>
-        const apiKey = ""; 
-
-        function toggleChat() {
-            const chatWindow = document.getElementById('chatWindow');
-            const isOpen = chatWindow.style.display === 'flex';
-            chatWindow.style.display = isOpen ? 'none' : 'flex';
-            if (!isOpen) {
-                chatWindow.classList.add('open');
-                document.getElementById('chatInput').focus();
-            }
+<script>
+    // 1. 채팅창 열기/닫기 함수
+    function toggleChat() {
+        const chatWindow = document.getElementById('chatWindow');
+        const isOpen = chatWindow.style.display === 'flex';
+        chatWindow.style.display = isOpen ? 'none' : 'flex';
+        if (!isOpen) {
+            chatWindow.classList.add('open');
+            document.getElementById('chatInput').focus();
         }
+    }
 
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            const messagesContainer = document.getElementById('chatMessages');
-            if (!message) return;
-
-            // 사용자 메시지 추가
-            const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble user animate__animated animate__fadeInUp';
-            userBubble.innerText = message;
-            messagesContainer.appendChild(userBubble);
-            input.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            // 로딩 상태
-            const loadingBubble = document.createElement('div');
-            loadingBubble.className = 'chat-bubble bot loading-dots';
-            loadingBubble.innerText = '생각 중이에욥';
-            messagesContainer.appendChild(loadingBubble);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            try {
-                const response = await callGeminiAPI(message, 
-                    "당신은 전주 팔복예술공장의 굴뚝에서 태어난 연기 요정 '복영기'입니다. " +
-                    "성격은 MBTI ENFP로 매우 활기차고 다정하며, 사람을 좋아합니다. " +
-                    "말끝마다 '~욥'을 붙이는 것이 특징입니다. " +
-                    "전주 팔복동 산업단지의 역사와 현재의 예술 공간, 그리고 미래문화도시 전주의 비전을 잘 알고 있습니다. " +
-                    "옆에는 말없는 단짝 친구 '팔뚝'이 항상 함께 있으며 필요하면 팔뚝의 반응도 괄호()로 묘사합니다. " +
-                    "답변은 친절하고 재치 있게, 3문장 이내로 짧게 하세요."
-                );
-
-                messagesContainer.removeChild(loadingBubble);
-                const botBubble = document.createElement('div');
-                botBubble.className = 'chat-bubble bot animate__animated animate__fadeIn';
-                botBubble.innerHTML = response.replace(/\n/g, '<br>');
-                messagesContainer.appendChild(botBubble);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            } catch (error) {
-                messagesContainer.removeChild(loadingBubble);
-                const errorBubble = document.createElement('div');
-                errorBubble.className = 'chat-bubble bot';
-                errorBubble.innerText = "앗, 연기가 살짝 꼬였나 봐요! 다시 말씀해주실 수 있나욥?";
-                messagesContainer.appendChild(errorBubble);
-            }
-        }
-
-        async function makeAWish() {
-            const wishInput = document.getElementById('wishInput');
-            const wish = wishInput.value.trim();
-            const resultDiv = document.getElementById('wishResult');
-            const responseText = document.getElementById('wishResponseText');
-            const actionText = document.getElementById('wishActionText');
-
-            if (!wish) return;
-
-            resultDiv.classList.remove('hidden');
-            responseText.innerText = "복영기가 소원을 소중히 읽고 있어욥...";
-            actionText.innerText = "(팔뚝이가 반짝반짝 빛납니다)";
-
-            try {
-                const prompt = `사용자의 소원: "${wish}". 복영기가 되어 다정한 응원 메시지를 작성하세요. (~욥 체 사용). 마지막 줄에 'ACTION: [팔뚝의 행동 묘사]'를 포함하세요.`;
-                const rawResponse = await callGeminiAPI(prompt, "소원을 응원하는 다정한 요정 복영기입니다.");
-                const parts = rawResponse.split('ACTION:');
-                
-                responseText.innerHTML = parts[0].trim().replace(/\n/g, '<br>');
-                actionText.innerText = parts[1] ? parts[1].trim() : "팔뚝이가 당신을 향해 박수를 쳐욥!";
-                wishInput.value = '';
-            } catch (error) {
-                responseText.innerText = "소원을 배달하는 중에 바람이 너무 많이 불었어욥. 잠시 후 다시 해볼까욥?";
-            }
-        }
-
-         async function callGeminiAPI(userText, systemInstructionText) {
-             // 이제 API 키는 필요 없습니다! 서버로 요청을 보냅니다.
-             const response = await fetch('/api/chat', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({
-                     message: userText,
-                     systemInstruction: systemInstructionText
-                 })
-             });
-    
-             if (!response.ok) throw new Error('서버 응답 실패');
-             const data = await response.json();
-             return data.text;
-         }
-            const response = await fetch(url, {
+    // 2. Vercel 서버리스 함수 호출 (핵심 보안 로직)
+    async function callGeminiAPI(userText, systemInstructionText) {
+        try {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    message: userText,
+                    systemInstruction: systemInstructionText
+                })
             });
-            
-            if (!response.ok) throw new Error('API 연동 실패');
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Server Error Details:", errorData);
+                throw new Error('서버 응답 실패');
+            }
             
             const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
+            return data.text;
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            throw error;
         }
-    </script>
-</body>
-</html>
+    }
+
+    // 3. 메시지 전송 로직
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        const messagesContainer = document.getElementById('chatMessages');
+        if (!message) return;
+
+        // 사용자 메시지 UI 추가
+        const userBubble = document.createElement('div');
+        userBubble.className = 'chat-bubble user animate__animated animate__fadeInUp';
+        userBubble.innerText = message;
+        messagesContainer.appendChild(userBubble);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // 로딩 상태 표시
+        const loadingBubble = document.createElement('div');
+        loadingBubble.className = 'chat-bubble bot loading-dots';
+        loadingBubble.innerText = '생각 중이에욥';
+        messagesContainer.appendChild(loadingBubble);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        try {
+            const systemPrompt = "당신은 전주 팔복예술공장의 굴뚝에서 태어난 연기 요정 '복영기'입니다. " +
+                                 "성격은 MBTI ENFP로 매우 활기차고 다정하며, 말끝마다 '~영'을 붙입니다. " +
+                                 "옆에는 말없는 단짝 친구 '팔뚝'이 항상 함께 있으며 필요하면 팔뚝의 반응도 괄호()로 묘사합니다. " +
+                                 "답변은 친절하고 재치 있게, 3문장 이내로 짧게 하세요.";
+
+            const response = await callGeminiAPI(message, systemPrompt);
+
+            messagesContainer.removeChild(loadingBubble);
+            const botBubble = document.createElement('div');
+            botBubble.className = 'chat-bubble bot animate__animated animate__fadeIn';
+            botBubble.innerHTML = response.replace(/\n/g, '<br>');
+            messagesContainer.appendChild(botBubble);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } catch (error) {
+            if (loadingBubble.parentNode) messagesContainer.removeChild(loadingBubble);
+            const errorBubble = document.createElement('div');
+            errorBubble.className = 'chat-bubble bot';
+            errorBubble.innerText = "앗, 연기가 살짝 꼬였나 봐요! 다시 보내주시겠어영?";
+            messagesContainer.appendChild(errorBubble);
+        }
+    }
+
+    // 4. 소원 빌기 로직
+    async function makeAWish() {
+        const wishInput = document.getElementById('wishInput');
+        const wish = wishInput.value.trim();
+        const resultDiv = document.getElementById('wishResult');
+        const responseText = document.getElementById('wishResponseText');
+        const actionText = document.getElementById('wishActionText');
+
+        if (!wish) return;
+
+        resultDiv.classList.remove('hidden');
+        responseText.innerText = "복영기가 소원을 소중히 읽고 있어영...";
+        actionText.innerText = "(팔뚝이가 반짝반짝 빛납니다)";
+
+        try {
+            const prompt = `사용자의 소원: "${wish}". 복영기가 되어 다정한 응원 메시지를 작성하세요. (~영 체 사용). 마지막 줄에 'ACTION: [팔뚝의 행동 묘사]'를 포함하세요.`;
+            const rawResponse = await callGeminiAPI(prompt, "소원을 응원하는 다정한 요정 복영기입니다.");
+            
+            const parts = rawResponse.split('ACTION:');
+            responseText.innerHTML = parts[0].trim().replace(/\n/g, '<br>');
+            actionText.innerText = parts[1] ? parts[1].trim() : "팔뚝이가 당신을 향해 박수를 쳐영!";
+            wishInput.value = '';
+        } catch (error) {
+            responseText.innerText = "소원을 배달하는 중에 바람이 너무 많이 불었어영. 다시 한 번 시도해보세영";
+        }
+    }
+</script>
