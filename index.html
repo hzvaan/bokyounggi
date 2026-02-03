@@ -373,14 +373,14 @@
     // 2. Vercel 서버리스 함수 호출 (핵심 보안 로직)
     async function callGeminiAPI(userText, systemInstructionText) {
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: userText,
-                    systemInstruction: systemInstructionText
-                })
-            });
+         const response = await fetch('/api/chat', { // 앞에 슬래시가 있는지 꼭 확인!
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+                 message: userText,
+                 systemInstruction: systemInstructionText
+             })
+         });
 
             if (!response.ok) {
                 const errorData = await response.json();
