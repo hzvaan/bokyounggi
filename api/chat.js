@@ -16,9 +16,10 @@ export default async function handler(req, res) {
     
     // 💡 해결 포인트: 모델명을 "gemini-1.5-flash-latest"로 지정합니다.
     // 이 명칭은 구글 API v1beta 환경에서 가장 인식이 잘 됩니다.
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash-latest" 
-    });
+   const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash", // "-latest"를 지우고 기본 모델명을 사용하세요.
+      systemInstruction: systemInstruction
+    \});
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: message }] }],
