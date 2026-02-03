@@ -359,7 +359,7 @@
     </div>
 
     <script>
-        const apiKey = "AIzaSyB7jTP4TiqFMcCI7rQWu0XdEIQKDn85bJg"; 
+        const apiKey = ""; 
 
         function toggleChat() {
             const chatWindow = document.getElementById('chatWindow');
@@ -443,13 +443,21 @@
             }
         }
 
-        async function callGeminiAPI(userText, systemInstructionText) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: userText }] }],
-                systemInstruction: { parts: [{ text: systemInstructionText }] }
-            };
-            
+         async function callGeminiAPI(userText, systemInstructionText) {
+             // 이제 API 키는 필요 없습니다! 서버로 요청을 보냅니다.
+             const response = await fetch('/api/chat', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({
+                     message: userText,
+                     systemInstruction: systemInstructionText
+                 })
+             });
+    
+             if (!response.ok) throw new Error('서버 응답 실패');
+             const data = await response.json();
+             return data.text;
+         }
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
