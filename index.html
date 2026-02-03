@@ -330,127 +330,138 @@
         <p>Copyright © 2026 JEONJU CULTURAL FOUNDATION. All rights reserved.</p>
     </footer>
 
-    <!-- ✨ Chat Widget -->
-    <div class="chat-widget">
-        <div id="chatWindow" class="chat-window">
-            <div class="chat-header">
-                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-lg">☁️</div>
-                <div>
-                    <p class="font-bold text-gray-800 text-sm">복영기 (AI)</p>
-                    <p class="text-xs text-gray-500">무엇이든 물어보세욥!</p>
-                </div>
-                <button onclick="toggleChat()" class="ml-auto text-gray-400 hover:text-gray-600">✕</button>
-            </div>
-            <div id="chatMessages" class="chat-messages">
-                <div class="chat-bubble bot">
-                    안녕하세욥! 저는 팔복동 굴뚝에서 태어난 복영기에욥! ☁️<br>
-                    궁금한 게 있거나 심심하면 저랑 이야기해욥!
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." 
-                       class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-mint"
-                       onkeypress="if(event.key === 'Enter') sendMessage()">
-                <button onclick="sendMessage()" class="bg-mint text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-emerald-500 transition">➤</button>
-            </div>
-        </div>
-        <button onclick="toggleChat()" class="chat-button animate__animated animate__pulse animate__infinite">
-            <span class="text-2xl">💬</span>
-        </button>
-    </div>
+    <!-- ✨ Chat Widget -->
+    <div class="chat-widget">
+        <div id="chatWindow" class="chat-window">
+            <div class="chat-header">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-inner">☁️</div>
+                <div>
+                    <p class="font-bold text-gray-800 text-base">복영기 (AI)</p>
+                    <p class="text-xs text-teal-600 font-bold">온라인 • 무엇이든 물어보세욥!</p>
+                </div>
+                <button onclick="toggleChat()" class="ml-auto text-gray-400 hover:text-gray-600 text-2xl">✕</button>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="chat-bubble bot">
+                    안녕하세욥! 저는 팔복동 굴뚝에서 태어난 연기 요정 복영기에욥! ☁️<br><br>
+                    팔복동이나 예술공장에 대해 궁금한 게 있나욥? 아니면 그냥 수다 떨고 싶으신가욥?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="복영기에게 말을 걸어보세욥..." 
+                       class="flex-1 border-2 border-gray-100 rounded-full px-6 py-3 text-base focus:outline-none focus:border-mint transition-colors"
+                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-teal-600 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-teal-700 transition-transform active:scale-90 shadow-md">➤</button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="chat-button animate__animated animate__pulse animate__infinite">
+            <span class="text-3xl">💬</span>
+        </button>
+    </div>
 
+    <script>
+        const apiKey = ""; 
 
-    <script>
-        const apiKey = ""; 
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const isOpen = chatWindow.style.display === 'flex';
+            chatWindow.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) {
+                chatWindow.classList.add('open');
+                document.getElementById('chatInput').focus();
+            }
+        }
 
-        function toggleChat() {
-            const chatWindow = document.getElementById('chatWindow');
-            chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
-            if (chatWindow.style.display === 'flex') chatWindow.classList.add('open');
-        }
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const messagesContainer = document.getElementById('chatMessages');
+            if (!message) return;
 
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            const messagesContainer = document.getElementById('chatMessages');
-            if (!message) return;
+            // 사용자 메시지 추가
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user animate__animated animate__fadeInUp';
+            userBubble.innerText = message;
+            messagesContainer.appendChild(userBubble);
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble user';
-            userBubble.innerText = message;
-            messagesContainer.appendChild(userBubble);
-            input.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // 로딩 상태
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble bot loading-dots';
+            loadingBubble.innerText = '생각 중이에욥';
+            messagesContainer.appendChild(loadingBubble);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            const loadingBubble = document.createElement('div');
-            loadingBubble.className = 'chat-bubble bot loading-dots';
-            loadingBubble.innerText = '생각하는 중이에욥';
-            messagesContainer.appendChild(loadingBubble);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            try {
+                const response = await callGeminiAPI(message, 
+                    "당신은 전주 팔복예술공장의 굴뚝에서 태어난 연기 요정 '복영기'입니다. " +
+                    "성격은 MBTI ENFP로 매우 활기차고 다정하며, 사람을 좋아합니다. " +
+                    "말끝마다 '~욥'을 붙이는 것이 특징입니다. " +
+                    "전주 팔복동 산업단지의 역사와 현재의 예술 공간, 그리고 미래문화도시 전주의 비전을 잘 알고 있습니다. " +
+                    "옆에는 말없는 단짝 친구 '팔뚝'이 항상 함께 있으며 필요하면 팔뚝의 반응도 괄호()로 묘사합니다. " +
+                    "답변은 친절하고 재치 있게, 3문장 이내로 짧게 하세요."
+                );
 
-            try {
-                const response = await callGeminiAPI(message, 
-                    "당신은 전주 팔복예술공장의 굴뚝에서 태어난 연기 요정 '복영기'입니다. " +
-                    "성격은 MBTI ENFP로 매우 활기차고 다정하며, 사람을 좋아합니다. " +
-                    "말끝마다 '~욥'을 붙이는 것이 특징입니다. " +
-                    "과거 산업단지의 기억과 현재 예술공장의 이야기를 잘 알고 있습니다. " +
-                    "옆에는 말없는 친구 '팔뚝'이 항상 함께 있습니다. " +
-                    "사용자의 질문에 친절하고 재치 있게, 그리고 짧게(3문장 이내) 답변해 주세요."
-                );
+                messagesContainer.removeChild(loadingBubble);
+                const botBubble = document.createElement('div');
+                botBubble.className = 'chat-bubble bot animate__animated animate__fadeIn';
+                botBubble.innerHTML = response.replace(/\n/g, '<br>');
+                messagesContainer.appendChild(botBubble);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                messagesContainer.removeChild(loadingBubble);
+                const errorBubble = document.createElement('div');
+                errorBubble.className = 'chat-bubble bot';
+                errorBubble.innerText = "앗, 연기가 살짝 꼬였나 봐요! 다시 말씀해주실 수 있나욥?";
+                messagesContainer.appendChild(errorBubble);
+            }
+        }
 
-                messagesContainer.removeChild(loadingBubble);
-                const botBubble = document.createElement('div');
-                botBubble.className = 'chat-bubble bot';
-                botBubble.innerHTML = response.replace(/\n/g, '<br>');
-                messagesContainer.appendChild(botBubble);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            } catch (error) {
-                messagesContainer.removeChild(loadingBubble);
-                const errorBubble = document.createElement('div');
-                errorBubble.className = 'chat-bubble bot';
-                errorBubble.innerText = "앗, 연기가 꼬였나 봐요. 잠시 후 다시 말해줄래욥?";
-                messagesContainer.appendChild(errorBubble);
-            }
-        }
+        async function makeAWish() {
+            const wishInput = document.getElementById('wishInput');
+            const wish = wishInput.value.trim();
+            const resultDiv = document.getElementById('wishResult');
+            const responseText = document.getElementById('wishResponseText');
+            const actionText = document.getElementById('wishActionText');
 
-        async function makeAWish() {
-            const wishInput = document.getElementById('wishInput');
-            const wish = wishInput.value.trim();
-            const resultDiv = document.getElementById('wishResult');
-            const responseText = document.getElementById('wishResponseText');
-            const actionText = document.getElementById('wishActionText');
+            if (!wish) return;
 
-            if (!wish) return;
+            resultDiv.classList.remove('hidden');
+            responseText.innerText = "복영기가 소원을 소중히 읽고 있어욥...";
+            actionText.innerText = "(팔뚝이가 반짝반짝 빛납니다)";
 
-            resultDiv.classList.remove('hidden');
-            responseText.innerText = "복영기가 소원을 읽고 있어욥...";
-            actionText.innerText = "(반짝반짝)";
+            try {
+                const prompt = `사용자의 소원: "${wish}". 복영기가 되어 다정한 응원 메시지를 작성하세요. (~욥 체 사용). 마지막 줄에 'ACTION: [팔뚝의 행동 묘사]'를 포함하세요.`;
+                const rawResponse = await callGeminiAPI(prompt, "소원을 응원하는 다정한 요정 복영기입니다.");
+                const parts = rawResponse.split('ACTION:');
+                
+                responseText.innerHTML = parts[0].trim().replace(/\n/g, '<br>');
+                actionText.innerText = parts[1] ? parts[1].trim() : "팔뚝이가 당신을 향해 박수를 쳐욥!";
+                wishInput.value = '';
+            } catch (error) {
+                responseText.innerText = "소원을 배달하는 중에 바람이 너무 많이 불었어욥. 잠시 후 다시 해볼까욥?";
+            }
+        }
 
-            try {
-                const prompt = `사용자가 다음과 같은 소원을 빌었습니다: "${wish}". 이 소원에 대해 복영기가 되어 짧고 따뜻한 응원의 메시지를 작성해 주세요. 말투는 '~욥'체를 사용하세요. 마지막 줄에 별도의 줄로 구분하여 'ACTION: [팔뚝의 반응]' 형식을 추가하세요.`;
-                const rawResponse = await callGeminiAPI(prompt, "소원을 들어주는 요정 복영기입니다.");
-                const parts = rawResponse.split('ACTION:');
-                responseText.innerHTML = parts[0].trim().replace(/\n/g, '<br>');
-                actionText.innerText = parts[1] ? parts[1].trim() : "팔뚝이가 환하게 웃고 있어요!";
-            } catch (error) {
-                responseText.innerText = "소원을 배달하는 중에 바람이 너무 많이 불었어욥...";
-            }
-        }
-
-        async function callGeminiAPI(userText, systemInstructionText) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: userText }] }],
-                systemInstruction: { parts: [{ text: systemInstructionText }] }
-            };
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-    </script>
+        async function callGeminiAPI(userText, systemInstructionText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userText }] }],
+                systemInstruction: { parts: [{ text: systemInstructionText }] }
+            };
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) throw new Error('API 연동 실패');
+            
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+    </script>
 </body>
 </html>
