@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>복영기와 팔뚝 - 팔복동 이야기</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        h1, h2, h3, h4, .font-cute { font-family: 'Jua', sans-serif; }
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #FFFDF7; color: #4A4A4A; }
+        /* 커스텀 폰트 적용: EF_제주돌담 */
+        @font-face {
+            font-family: 'EF_JejuDoldam';
+            src: url('https://raw.githubusercontent.com/hzvaan/bokyounggi/7117e534a964b7a952543e004eeb18f89c434930/EF_jejudoldam(OTF).otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* 타이틀 및 강조 폰트 설정 */
+        h1, h2, h3, h4, .font-cute, .font-title { 
+            font-family: 'EF_JejuDoldam', sans-serif; 
+            letter-spacing: -0.02em;
+        }
+        
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: #FFFDF7; 
+            color: #4A4A4A; 
+            line-height: 1.6;
+        }
 
         .texture-overlay {
             position: fixed;
@@ -175,72 +193,70 @@
     </section>
 
     <!-- 2. 캐릭터 소개 (표 형식) -->
-    <section id="profile" class="py-20 px-6 bg-sky/20">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-4xl text-center text-gray-800 mb-4 font-cute">☁️ 우린 이렇게 달라요!</h2>
-            <p class="text-center text-gray-500 mb-12">성격은 다르지만 세상에서 제일 친한 단짝 친구!</p>
+    <section id="profile" class="py-24 px-6 bg-sky/30">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl md:text-5xl text-center text-gray-800 mb-4">☁️ 우린 이렇게 달라요!</h2>
+            <p class="text-center text-gray-500 mb-16 text-lg">성격은 다르지만 세상에서 제일 친한 단짝 친구!</p>
 
-            <div class="bg-white rounded-3xl p-2 md:p-8 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-600 font-cute text-lg border-b-2 border-gray-100">
-                                <th class="p-4 text-center w-1/3">구분</th>
-                                <th class="p-4 text-center w-1/3 text-mint">복영기 (Bok-Yeong-Gi)</th>
-                                <th class="p-4 text-center w-1/3 text-orange">팔뚝 (Pal-Ttuk)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <tr>
-                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">누구인가요?</td>
-                                <td class="p-4 bg-mint/5">
-                                    <span class="font-bold">문화의 연기</span><br>
-                                    사람들에게 행복을 주는 몽글몽글한 존재
-                                </td>
-                                <td class="p-4 bg-orange/5">
-                                    <span class="font-bold">작은 연기 조각</span><br>
-                                    복영기의 재채기로 태어난 든든한 단짝
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">MBTI 성격</td>
-                                <td class="p-4 bg-mint/5">
-                                    <span class="inline-block bg-mint text-white px-2 py-1 rounded text-xs mb-1">ENFP</span><br>
-                                    사람을 엄청 좋아하고<br>호기심 대장이야!
-                                </td>
-                                <td class="p-4 bg-orange/5">
-                                    <span class="inline-block bg-orange text-white px-2 py-1 rounded text-xs mb-1">ISFP</span><br>
-                                    조용하지만 눈치가 빠르고<br>감각이 뛰어나!
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">특징 & 능력</td>
-                                <td class="p-4 bg-mint/5">
-                                    🍀 <b>행운 선물하기</b><br>
-                                    오래된 물건의 기억 읽기<br>
-                                    기분 좋으면 몸이 커짐
-                                </td>
-                                <td class="p-4 bg-orange/5">
-                                    💡 <b>길 안내하기</b><br>
-                                    좁은 틈새 탐험하기<br>
-                                    몸짓으로 대화함
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 text-center font-bold text-gray-600 bg-gray-50/50">말버릇</td>
-                                <td class="p-4 bg-mint/5 text-mint font-cute text-lg">
-                                    "안녕하세욥?"<br>"재밌지 않아욥?"
-                                </td>
-                                <td class="p-4 bg-orange/5 text-orange font-cute text-lg">
-                                    (말없이 반짝반짝 빛남)
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
+            <div class="bg-white rounded-[40px] p-4 md:p-12 shadow-xl border border-white/50 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-xl border-b-4 border-gray-100">
+                                <th class="p-6 text-center w-1/4 font-title">구분</th>
+                                <th class="p-6 text-center w-3/8 text-mint text-2xl font-title">복영기 (Bok-Yeong-Gi)</th>
+                                <th class="p-6 text-center w-3/8 text-orange text-2xl font-title">팔뚝 (Pal-Ttuk)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="p-6 text-center font-bold text-gray-600 bg-gray-50/50">누구인가요?</td>
+                                <td class="p-6 bg-mint/5">
+                                    <span class="font-bold text-lg">문화의 연기</span><br>
+                                    사람들에게 행복을 주는 몽글몽글한 존재
+                                </td>
+                                <td class="p-6 bg-orange/5">
+                                    <span class="font-bold text-lg">작은 연기 조각</span><br>
+                                    복영기의 재채기로 태어난 든든한 단짝
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 text-center font-bold text-gray-600 bg-gray-50/50">MBTI 성격</td>
+                                <td class="p-6 bg-mint/5">
+                                    <span class="inline-block bg-teal-600 text-white px-3 py-1 rounded-full text-sm mb-2 font-bold">ENFP</span><br>
+                                    사람을 엄청 좋아하고 호기심 대장이야!
+                                </td>
+                                <td class="p-6 bg-orange/5">
+                                    <span class="inline-block bg-orange-500 text-white px-3 py-1 rounded-full text-sm mb-2 font-bold">ISFP</span><br>
+                                    조용하지만 감각이 뛰어나고 든든해!
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 text-center font-bold text-gray-600 bg-gray-50/50">특징 & 능력</td>
+                                <td class="p-6 bg-mint/5">
+                                    🍀 <b>행운 선물하기</b><br>
+                                    오래된 물건의 기억 읽기
+                                </td>
+                                <td class="p-6 bg-orange/5">
+                                    💡 <b>길 안내하기</b><br>
+                                    좁은 틈새 탐험하며 빛나기
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-6 text-center font-bold text-gray-600 bg-gray-50/50">말버릇</td>
+                                <td class="p-6 bg-mint/5 text-mint">
+                                    "안녕하세욥?"<br>"재밌지 않아욥?"
+                                </td>
+                                <td class="p-6 bg-orange/5 text-orange">
+                                    (반짝반짝 빛나며 미소)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- 3. 에피소드 -->
     <section id="episode" class="py-20 px-6">
