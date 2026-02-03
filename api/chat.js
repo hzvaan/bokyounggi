@@ -5,26 +5,33 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'POST 요청만 가능해영!' });
   }
 
-  if (!process.env.GEMINI_API_KEY) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
     return res.status(500).json({ error: "API 키가 설정되지 않았어영!" });
   }
 
   try {
     const { message, systemInstruction } = req.body;
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(apiKey);
     
-    // 핵심 수정: 모델 이름 앞에 'models/'를 명시적으로 붙였습니다.
+    // 💡 해결 포인트: 모델명을 "gemini-1.5-flash-latest"로 지정합니다.
+    // 이 명칭은 구글 API v1beta 환경에서 가장 인식이 잘 됩니다.
     const model = genAI.getGenerativeModel({ 
-      model: "models/gemini-1.5-flash"
+      model: "gemini-1.5-flash-latest" 
     });
 
-    const result = await model.generateContent(message);
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: message }] }],
+      systemInstruction: systemInstruction,
+    });
+
     const response = await result.response;
     const text = response.text();
 
     return res.status(200).json({ text });
   } catch (error) {
     console.error("Gemini API 상세 에러:", error);
-    return res.status(500).json({ error: error.message });
+    // 404 에러가 발생할 경우를 대비해 더 친절한 에러 메시지를 띄웁니다.
+    return res.status(500).json({ error: `복영기가 잠시 자리를 비웠어영! (${error.message})` });
   }
 }
