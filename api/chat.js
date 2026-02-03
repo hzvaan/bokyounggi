@@ -1,24 +1,33 @@
 // api/chat.js
-export default async function handler(req, res) {
-  const { message, systemInstruction } = req.body;
-  const API_KEY = process.env.GEMINI_API_KEY; // 서버에 저장된 키를 가져옵니다.
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AIzaSyBGrfaZL6d5Wt6LjInaWK3g5JVPOd2oUoI}`;
+export default async function handler(req, res) {
+  // 1. POST 요청인지 확인 (보안)
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const { message, systemInstruction } = req.body;
+
+  // 2. 환경변수에 저장된 API KEY 불러오기
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `시스템: ${systemInstruction}\n사용자: ${message}` }] }]
-      })
+    // 3. 모델 설정 (시스템 프롬프트 주입)
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction, // 복영기 페르소나 주입
     });
 
-    const data = await response.json();
-    const botResponse = data.candidates[0].content.parts[0].text;
-    
-    res.status(200).json({ text: botResponse });
+    // 4. 답변 생성
+    const result = await model.generateContent(message);
+    const response = await result.response;
+    const text = response.text();
+
+    // 5. 결과 반환
+    return res.status(200).json({ text });
   } catch (error) {
-    res.status(500).json({ error: "연기가 꼬였어욥!" });
+    console.error("Gemini API Error:", error);
+    return res.status(500).json({ error: "연기가 꼬였어영! 잠시 후 다시 시도해주세영." });
   }
 }
