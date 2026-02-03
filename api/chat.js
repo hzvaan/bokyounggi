@@ -1,39 +1,30 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 export default async function handler(req, res) {
-  // 1. 서버가 깨어있는지 확인
-  console.log("복영기 서버 작동 시작!");
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  const { message } = req.body;
+
+  // SDK를 쓰지 않고 직접 구글 API 주소로 요청을 보냅니다.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
-    const key = process.env.GEMINI_API_KEY;
-    
-    // 2. 키 자체가 들어오는지 확인 (보안상 앞 4자리만 로그에 찍음)
-    if (!key) {
-      return res.status(500).json({ error: "시스템 설정에 API 키가 누락되었습니다. (Vercel 설정 확인 필요)" });
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: message }] }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // 구글 서버가 직접 보내는 에러 메시지를 그대로 출력합니다.
+      return res.status(response.status).json({ error: data.error.message || "구글 서버 에러" });
     }
-    console.log("키 확인 완료:", key.substring(0, 4) + "****");
 
-    const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    // 3. 아주 간단한 인사만 시켜보기 (데이터 전달 문제인지 확인)
-    const result = await model.generateContent("안녕하세요, 1글자로 '네'라고 답해주세요.");
-    const response = await result.response;
-    const text = response.text();
-
-    return res.status(200).json({ 
-      success: true, 
-      message: "연결 성공!", 
-      data: text 
-    });
-
-  } catch (err) {
-    // 4. 에러의 정체를 낱낱이 밝히기
-    console.error("상세 에러:", err);
-    return res.status(500).json({ 
-      error: "범인 검거 완료!", 
-      detail: err.message,
-      code: err.status || "알 수 없음"
-    });
+    return res.status(200).json({ text: data.candidates[0].content.parts[0].text });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 }
